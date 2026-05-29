@@ -45,6 +45,16 @@ export function Navigation() {
         </svg>
       )
     },
+    {
+      path: '/leads/extractor',
+      label: 'Extrator de Leads',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      )
+    },
     ...(['ADMIN', 'TENANT_ADMIN', 'SUPERADMIN'].includes(user?.role || '') ? [{
       path: '/usuarios',
       label: 'Usuários',
@@ -77,26 +87,21 @@ export function Navigation() {
 
   return (
     <nav className="sidebar-navigation w-20 shadow-lg flex flex-col" style={{ background: 'var(--sidebar-bg)' }}>
-      <div className="p-4 flex-1">
-        {/* Ícone */}
-        <div className="mb-8 flex items-center justify-center">
-          <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-            {loading ? (
-              <div className="h-8 w-8 bg-white/20 animate-pulse rounded"></div>
-            ) : settings?.iconUrl ? (
-              <img
-                src={settings.iconUrl}
-                alt={settings?.companyName || 'Sistema'}
-                className="max-h-8 max-w-8 object-contain"
-              />
-            ) : (
-              <span className="text-white font-bold text-lg">
-                {settings?.companyName?.charAt(0)?.toUpperCase() || 'A'}
-              </span>
-            )}
-          </div>
-        </div>
-
+      {/* Logo Original Destacada - Diretamente no fundo escuro */}
+      <div className="w-full flex items-center justify-center py-6 border-b border-white/10">
+        {loading ? (
+          <div className="h-12 w-12 bg-white/10 animate-pulse rounded"></div>
+        ) : (
+          <img
+            src={settings?.logoUrl || '/assets/default-logo.png'}
+            alt={settings?.companyName || 'Sistema'}
+            className="w-16 h-auto object-contain drop-shadow-lg"
+            style={{ transform: 'scale(1.4)' }} // Aumenta o tamanho da logo
+          />
+        )}
+      </div>
+      
+      <div className="p-4 flex-1 mt-2">
         {/* Menu Items */}
         <ul className="space-y-3">
           {menuItems.map((item) => (

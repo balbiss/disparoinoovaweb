@@ -40,22 +40,22 @@ export function LoginPage() {
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-1/2 p-12 flex items-center justify-center text-white" style={{ background: 'linear-gradient(135deg, #233e4f 0%, #1a2d3b 100%)' }}>
             <div className="text-center">
-              <div className="w-24 h-24 bg-white/20 rounded-2xl mx-auto mb-8 flex items-center justify-center backdrop-blur-sm">
-                {settings?.iconUrl ? (
-                  <img
-                    src={settings.iconUrl}
-                    alt="Ícone do Sistema"
-                    className="w-16 h-16 object-contain"
-                    style={{ filter: 'brightness(0) invert(1)' }}
-                  />
-                ) : (
-                  <img
-                    src="/favicon.png"
-                    alt="Astra Online"
-                    className="w-16 h-16 object-contain"
-                    style={{ filter: 'brightness(0) invert(1)' }}
-                  />
-                )}
+              <style>{`
+                @keyframes float {
+                  0% { transform: translateY(0px) scale(1); }
+                  50% { transform: translateY(-10px) scale(1.02); }
+                  100% { transform: translateY(0px) scale(1); }
+                }
+                .animate-float {
+                  animation: float 6s ease-in-out infinite;
+                }
+              `}</style>
+              <div className="w-full max-w-xs mx-auto mb-8 flex items-center justify-center">
+                <img
+                  src={settings?.logoUrl || '/assets/default-logo.png'}
+                  alt={settings?.companyName || 'Sistema'}
+                  className="w-full h-auto object-contain drop-shadow-2xl animate-float"
+                />
               </div>
               <h1 className="text-4xl font-bold mb-4">
                 {settings?.pageTitle || 'Astra Online'}

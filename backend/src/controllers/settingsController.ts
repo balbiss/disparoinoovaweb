@@ -13,7 +13,10 @@ const tenantSettingsService = new TenantSettingsService();
 // Configuração do multer para upload de logos
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = '/app/uploads';
+    const uploadDir = path.join(process.cwd(), 'uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
@@ -128,7 +131,8 @@ export const getSettings = async (req: AuthenticatedRequest, res: Response) => {
       chatwootAccountId: tenantSettings?.chatwootAccountId || null,
       chatwootApiToken: tenantSettings?.chatwootApiToken || null,
       perfexUrl: tenantSettings?.perfexUrl || null,
-      perfexToken: tenantSettings?.perfexToken || null
+      perfexToken: tenantSettings?.perfexToken || null,
+      apifyApiToken: tenantSettings?.apifyApiToken || null
     };
 
     res.json(combinedSettings);
@@ -162,7 +166,7 @@ export const updateSettings = async (req: AuthenticatedRequest, res: Response) =
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { wahaHost, wahaApiKey, evolutionHost, evolutionApiKey, quepasaUrl, quepasaLogin, quepasaPassword, companyName, pageTitle, openaiApiKey, groqApiKey, chatwootUrl, chatwootAccountId, chatwootApiToken, perfexUrl, perfexToken, tenantId } = req.body;
+    const { wahaHost, wahaApiKey, evolutionHost, evolutionApiKey, quepasaUrl, quepasaLogin, quepasaPassword, companyName, pageTitle, openaiApiKey, groqApiKey, chatwootUrl, chatwootAccountId, chatwootApiToken, perfexUrl, perfexToken, apifyApiToken, tenantId } = req.body;
 
     // Atualizar configurações globais (WAHA, Evolution, Quepasa são globais)
     const globalSettings = await settingsService.updateSettings({
@@ -186,7 +190,7 @@ export const updateSettings = async (req: AuthenticatedRequest, res: Response) =
 
     // Atualizar configurações do tenant (APIs de IA, Chatwoot e Perfex)
     let tenantSettings = null;
-    if (effectiveTenantId && (openaiApiKey !== undefined || groqApiKey !== undefined || chatwootUrl !== undefined || chatwootAccountId !== undefined || chatwootApiToken !== undefined || perfexUrl !== undefined || perfexToken !== undefined)) {
+    if (effectiveTenantId && (openaiApiKey !== undefined || groqApiKey !== undefined || chatwootUrl !== undefined || chatwootAccountId !== undefined || chatwootApiToken !== undefined || perfexUrl !== undefined || perfexToken !== undefined || apifyApiToken !== undefined)) {
       tenantSettings = await tenantSettingsService.updateTenantSettings(effectiveTenantId, {
         openaiApiKey,
         groqApiKey,
@@ -194,7 +198,8 @@ export const updateSettings = async (req: AuthenticatedRequest, res: Response) =
         chatwootAccountId,
         chatwootApiToken,
         perfexUrl,
-        perfexToken
+        perfexToken,
+        apifyApiToken
       });
     }
 
@@ -207,7 +212,8 @@ export const updateSettings = async (req: AuthenticatedRequest, res: Response) =
       chatwootAccountId: tenantSettings?.chatwootAccountId || null,
       chatwootApiToken: tenantSettings?.chatwootApiToken || null,
       perfexUrl: tenantSettings?.perfexUrl || null,
-      perfexToken: tenantSettings?.perfexToken || null
+      perfexToken: tenantSettings?.perfexToken || null,
+      apifyApiToken: tenantSettings?.apifyApiToken || null
     };
 
     res.json({
@@ -301,7 +307,7 @@ export const removeFavicon = async (req: Request, res: Response) => {
 
     if (settings.faviconUrl) {
       // Remover arquivo físico
-      const filePath = path.join('/app/uploads', path.basename(settings.faviconUrl.replace('/api/uploads/', '')));
+      const filePath = path.join(process.cwd(), 'uploads', path.basename(settings.faviconUrl.replace('/api/uploads/', '')));
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
@@ -329,7 +335,7 @@ export const removeLogo = async (req: Request, res: Response) => {
 
     if (settings.logoUrl) {
       // Remover arquivo físico
-      const filePath = path.join('/app/uploads', path.basename(settings.logoUrl.replace('/api/uploads/', '')));
+      const filePath = path.join(process.cwd(), 'uploads', path.basename(settings.logoUrl.replace('/api/uploads/', '')));
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
@@ -394,7 +400,7 @@ export const removeIcon = async (req: Request, res: Response) => {
 
     if (settings.iconUrl) {
       // Remover arquivo físico
-      const filePath = path.join('/app/uploads', path.basename(settings.iconUrl.replace('/api/uploads/', '')));
+      const filePath = path.join(process.cwd(), 'uploads', path.basename(settings.iconUrl.replace('/api/uploads/', '')));
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }

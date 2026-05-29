@@ -44,6 +44,7 @@ export class TenantSettingsService {
     chatwootApiToken?: string | null;
     perfexUrl?: string | null;
     perfexToken?: string | null;
+    apifyApiToken?: string | null;
   }) {
     try {
       const settings = await prisma.tenantSettings.upsert({
@@ -56,7 +57,8 @@ export class TenantSettingsService {
           chatwootAccountId: data.chatwootAccountId !== undefined ? data.chatwootAccountId : undefined,
           chatwootApiToken: data.chatwootApiToken !== undefined ? data.chatwootApiToken : undefined,
           perfexUrl: data.perfexUrl !== undefined ? data.perfexUrl : undefined,
-          perfexToken: data.perfexToken !== undefined ? data.perfexToken : undefined
+          perfexToken: data.perfexToken !== undefined ? data.perfexToken : undefined,
+          apifyApiToken: data.apifyApiToken !== undefined ? data.apifyApiToken : undefined
         },
         create: {
           tenantId,
@@ -67,7 +69,8 @@ export class TenantSettingsService {
           chatwootAccountId: data.chatwootAccountId || null,
           chatwootApiToken: data.chatwootApiToken || null,
           perfexUrl: data.perfexUrl || null,
-          perfexToken: data.perfexToken || null
+          perfexToken: data.perfexToken || null,
+          apifyApiToken: data.apifyApiToken || null
         }
       });
 

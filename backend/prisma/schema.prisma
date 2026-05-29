@@ -64,6 +64,7 @@ model TenantSettings {
   tenantId           String   @unique @map("tenant_id")
   openaiApiKey       String?  @map("openai_api_key")
   groqApiKey         String?  @map("groq_api_key")
+  apifyApiToken      String?  @map("apify_api_token")
   customBranding     Json?    @map("custom_branding") // Logo, colors, etc
   chatwootUrl        String?  @map("chatwoot_url")
   chatwootAccountId  String?  @map("chatwoot_account_id")

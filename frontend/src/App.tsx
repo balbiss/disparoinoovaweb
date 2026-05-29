@@ -11,6 +11,7 @@ import { CampaignsPage } from './pages/CampaignsPage';
 import { InteractiveCampaignPage } from './pages/InteractiveCampaignPage';
 import { FlowBuilderPage } from './pages/FlowBuilderPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { LeadExtractorPage } from './pages/LeadExtractorPage';
 import { UsersPage } from './pages/UsersPage';
 import { LoginPage } from './pages/LoginPage';
 import { SuperAdminPage } from './pages/SuperAdminPage';
@@ -149,6 +150,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/leads/extractor"
+            element={
+              <ProtectedRoute>
+                <LeadExtractorPage />
               </ProtectedRoute>
             }
           />

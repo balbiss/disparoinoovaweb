@@ -4,6 +4,7 @@ import { createServer } from 'http';
 import cors from 'cors';
 // import rateLimit from 'express-rate-limit'; // Temporariamente desabilitado
 import * as fs from 'fs';
+import path from 'path';
 import { contactRoutes } from './routes/contactRoutes';
 import { categoryRoutes } from './routes/categoryRoutes';
 import { mockRoutes } from './routes/mockRoutes';
@@ -23,6 +24,7 @@ import analyticsRoutes from './routes/analytics';
 import notificationsRoutes from './routes/notifications';
 import messageTemplatesRoutes from './routes/messageTemplates';
 import reportsRoutes from './routes/reports';
+import leadExtractorRoutes from './routes/leadExtractorRoutes';
 import automationRoutes from './routes/automation';
 import chatwootRoutes from './routes/chatwootRoutes';
 import perfexRoutes from './routes/perfexRoutes';
@@ -140,7 +142,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Servir uploads estaticamente (público)
-app.use('/api/uploads', express.static('/app/uploads'));
+app.use('/api/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Rotas públicas de webhooks (recebem de provedores externos)
 app.use('/api/webhooks', webhookRoutes);
@@ -162,6 +164,7 @@ app.use('/api/analytics', authMiddleware, analyticsRoutes); // Analytics and rep
 app.use('/api/notifications', authMiddleware, notificationsRoutes); // User notifications
 app.use('/api/templates', authMiddleware, messageTemplatesRoutes); // Message templates system
 app.use('/api/reports', authMiddleware, reportsRoutes); // Advanced reporting system
+app.use('/api/leads', leadExtractorRoutes); // Lead extractor
 app.use('/api/automation', authMiddleware, automationRoutes); // Automation and workflow system
 app.use('/api/chatwoot', authMiddleware, chatwootRoutes); // Chatwoot integration
 app.use('/api/perfex', authMiddleware, perfexRoutes); // Perfex CRM integration

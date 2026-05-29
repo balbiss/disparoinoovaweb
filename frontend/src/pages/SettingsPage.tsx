@@ -16,6 +16,7 @@ interface Settings {
   chatwootApiToken?: string;
   perfexUrl?: string;
   perfexToken?: string;
+  apifyApiToken?: string;
 }
 
 const settingsSchema = z.object({
@@ -26,6 +27,7 @@ const settingsSchema = z.object({
   chatwootApiToken: z.string().optional(),
   perfexUrl: z.string().optional(),
   perfexToken: z.string().optional(),
+  apifyApiToken: z.string().optional(),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -33,7 +35,7 @@ type SettingsFormData = z.infer<typeof settingsSchema>;
 export function SettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeModal, setActiveModal] = useState<'openai' | 'groq' | 'chatwoot' | 'perfex' | null>(null);
+  const [activeModal, setActiveModal] = useState<'openai' | 'groq' | 'chatwoot' | 'perfex' | 'apify' | null>(null);
   const { user } = useAuth();
 
   // Helper para fazer requisições autenticadas
@@ -103,6 +105,7 @@ export function SettingsPage() {
         setValue('chatwootApiToken', data.chatwootApiToken || '');
         setValue('perfexUrl', data.perfexUrl || '');
         setValue('perfexToken', data.perfexToken || '');
+        setValue('apifyApiToken', data.apifyApiToken || '');
       }
     } catch (error) {
       console.error('Erro ao carregar configurações:', error);
@@ -143,12 +146,13 @@ export function SettingsPage() {
     }
   };
 
-  const removeIntegration = async (type: 'openai' | 'groq' | 'chatwoot' | 'perfex') => {
+  const removeIntegration = async (type: 'openai' | 'groq' | 'chatwoot' | 'perfex' | 'apify') => {
     const integrationNames = {
       openai: 'OpenAI',
       groq: 'Groq',
       chatwoot: 'Chatwoot',
-      perfex: 'Perfex CRM'
+      perfex: 'Perfex CRM',
+      apify: 'Apify'
     };
 
     if (!confirm(`Tem certeza que deseja remover a integração com ${integrationNames[type]}?`)) {
@@ -169,6 +173,8 @@ export function SettingsPage() {
       } else if (type === 'perfex') {
         requestData.perfexUrl = '';
         requestData.perfexToken = '';
+      } else if (type === 'apify') {
+        requestData.apifyApiToken = '';
       }
 
       if (user?.role === 'SUPERADMIN') {
@@ -359,6 +365,45 @@ export function SettingsPage() {
                   <button
                     onClick={() => setActiveModal('perfex')}
                     className="px-3 py-1 bg-purple-600 text-white text-sm rounded hover:bg-purple-700"
+                  >
+                    Configurar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Integração Apify */}
+          <div className="bg-white rounded-lg shadow p-6 mt-6">
+            <h2 className="text-lg font-semibold mb-6 text-gray-900">
+              🗺️ Integração Apify
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Configure o token para permitir a Extração de Leads do Google Maps
+            </p>
+
+            <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                    <span className="text-teal-600 font-semibold">🗺️</span>
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">Apify</h3>
+                    <p className="text-sm text-gray-500">Extração de Leads do Google Maps</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    settings?.apifyApiToken
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {settings?.apifyApiToken ? 'Configurado' : 'Não configurado'}
+                  </span>
+                  <button
+                    onClick={() => setActiveModal('apify')}
+                    className="px-3 py-1 bg-teal-600 text-white text-sm rounded hover:bg-teal-700"
                   >
                     Configurar
                   </button>
@@ -654,6 +699,73 @@ export function SettingsPage() {
           }
         }}
       />
+
+      {/* Modal Apify */}
+      {activeModal === 'apify' && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">🗺️ Configurar Apify</h3>
+              <button
+                onClick={() => setActiveModal(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div>
+                <label htmlFor="apifyApiToken" className="block text-sm font-medium text-gray-700 mb-1">
+                  Token de API (Apify)
+                </label>
+                <input
+                  id="apifyApiToken"
+                  type="password"
+                  {...register('apifyApiToken')}
+                  placeholder="apify_api_..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.apifyApiToken && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.apifyApiToken.message}
+                  </p>
+                )}
+                <p className="text-xs text-gray-500 mt-2">
+                  Para pegar seu token, crie uma conta gratuita no <a href="https://console.apify.com/account/integrations" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">Apify</a> e copie o Personal API Token.
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setActiveModal(null)}
+                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Cancelar
+                </button>
+                {settings?.apifyApiToken && (
+                  <button
+                    type="button"
+                    onClick={() => removeIntegration('apify')}
+                    disabled={isSubmitting}
+                    className="flex-1 px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 disabled:opacity-50"
+                  >
+                    Remover
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Salvando...' : 'Salvar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </>
   );

@@ -166,4 +166,19 @@ export class ContactController {
       res.status(400).json(apiError);
     }
   }
+
+  static async deleteAllContacts(req: AuthenticatedRequest, res: Response) {
+    try {
+      const tenantId = req.tenantId;
+
+      const result = await ContactService.deleteAllContacts(tenantId);
+      res.json(result);
+    } catch (error) {
+      const apiError: ApiError = {
+        error: 'Erro ao excluir todos os contatos',
+        details: error instanceof Error ? error.message : error
+      };
+      res.status(400).json(apiError);
+    }
+  }
 }

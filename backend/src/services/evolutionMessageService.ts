@@ -1,4 +1,27 @@
 import { settingsService } from './settingsService';
+import fs from 'fs';
+import path from 'path';
+
+function resolveMediaToBase64(mediaUrl: string): string {
+  if (!mediaUrl) return '';
+  
+  try {
+    if (mediaUrl.includes('/api/uploads/')) {
+      const filename = mediaUrl.split('/api/uploads/')[1].split('?')[0];
+      const filepath = path.join(process.cwd(), 'uploads', filename);
+      
+      if (fs.existsSync(filepath)) {
+        const base64Data = fs.readFileSync(filepath, { encoding: 'base64' });
+        // The mimetype can usually be inferred or we let evolution handle it based on the mediatype property
+        return base64Data;
+      }
+    }
+  } catch (err) {
+    console.error('Erro ao converter media para base64:', err);
+  }
+  
+  return mediaUrl;
+}
 
 function normalizeBrazilianPhone(phone: string | number): string {
   if (!phone || phone === null || phone === undefined) {
@@ -45,7 +68,7 @@ export async function sendMessageViaEvolution(instanceName: string, phone: strin
         mediatype: 'image',
         mimetype: 'image/png',
         caption: message.caption || '',
-        media: message.image.url,
+        media: resolveMediaToBase64(message.image.url),
         fileName: 'imagem.png'
       };
     } else if (message.video) {
@@ -55,7 +78,7 @@ export async function sendMessageViaEvolution(instanceName: string, phone: strin
         mediatype: 'video',
         mimetype: 'video/mp4',
         caption: message.caption || '',
-        media: message.video.url,
+        media: resolveMediaToBase64(message.video.url),
         fileName: 'video.mp4'
       };
     } else if (message.audio) {
@@ -64,7 +87,7 @@ export async function sendMessageViaEvolution(instanceName: string, phone: strin
         number: normalizedPhone,
         mediatype: 'audio',
         mimetype: 'audio/ogg',
-        media: message.audio.url,
+        media: resolveMediaToBase64(message.audio.url),
         fileName: 'audio.ogg'
       };
     } else if (message.document) {
@@ -74,7 +97,7 @@ export async function sendMessageViaEvolution(instanceName: string, phone: strin
         mediatype: 'document',
         mimetype: 'application/pdf',
         caption: message.caption || '',
-        media: message.document.url,
+        media: resolveMediaToBase64(message.document.url),
         fileName: message.fileName || 'documento.pdf'
       };
     } else {

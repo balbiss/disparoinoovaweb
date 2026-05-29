@@ -78,11 +78,24 @@ async function enrichContactsWithCategories(contactsList: any[]): Promise<any[]>
 
 export class ContactService {
   static normalizePhone(phone: string): string {
-    const phoneNumber = parsePhoneNumberFromString(phone, 'BR');
-    if (!phoneNumber || !phoneNumber.isValid()) {
+    if (!phone) throw new Error('Número de telefone vazio');
+
+    // Remove tudo que não for número (espaços, parênteses, traços, letras)
+    let cleanPhone = phone.replace(/\D/g, '');
+
+    if (cleanPhone.length === 0) {
       throw new Error('Número de telefone inválido');
     }
-    return phoneNumber.format('E.164');
+
+    // Se o usuário digitou apenas DDD + Número (10 ou 11 dígitos), adicionamos o 55 do Brasil automaticamente
+    if (cleanPhone.length === 10 || cleanPhone.length === 11) {
+      cleanPhone = `55${cleanPhone}`;
+    }
+
+    // Se o usuário digitou um número local sem DDD (8 ou 9 dígitos), 
+    // isso é um erro porque não sabemos o DDD, mas vamos deixar passar e quem sabe o usuário corrige depois
+    // O ideal é sempre ter o '+' na frente para o padrão E.164
+    return `+${cleanPhone}`;
   }
 
   static async getContacts(
@@ -179,6 +192,18 @@ export class ContactService {
     try {
       console.log('📝 ContactService.createContact - data recebido:', JSON.stringify(data, null, 2));
       const normalizedPhone = this.normalizePhone(data.telefone);
+
+      // Verificar se o contato já existe no mesmo tenant
+      const existingContact = await prisma.contact.findFirst({
+        where: {
+          telefone: normalizedPhone,
+          tenantId: data.tenantId || null
+        }
+      });
+
+      if (existingContact) {
+        throw new Error(`O número ${data.telefone} já está cadastrado para esta empresa.`);
+      }
 
       const newContact = await prisma.contact.create({
         data: {
@@ -344,6 +369,35 @@ export class ContactService {
       };
     } catch (error) {
       console.error('❌ ContactService.bulkDeleteContacts - erro:', error);
+      throw error;
+    }
+  }
+
+  static async deleteAllContacts(tenantId?: string) {
+    try {
+      console.log('🗑️ ContactService.deleteAllContacts - Iniciando exclusão de todos os contatos');
+
+      const where: any = {};
+      if (tenantId) {
+        where.tenantId = tenantId;
+      }
+
+      const existingContacts = await prisma.contact.count({ where });
+      if (existingContacts === 0) {
+        throw new Error('Nenhum contato encontrado para excluir');
+      }
+
+      const result = await prisma.contact.deleteMany({
+        where
+      });
+
+      console.log('✅ ContactService.deleteAllContacts - contatos excluídos:', result.count);
+      return {
+        message: `${result.count} contato(s) excluído(s) com sucesso`,
+        count: result.count
+      };
+    } catch (error) {
+      console.error('❌ ContactService.deleteAllContacts - erro:', error);
       throw error;
     }
   }

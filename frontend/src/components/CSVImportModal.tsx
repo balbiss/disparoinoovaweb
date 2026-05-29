@@ -168,10 +168,12 @@ export function CSVImportModal({ isOpen, onClose, onSuccess }: CSVImportModalPro
           {/* Import Instructions */}
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
             <h3 className="font-medium text-gray-900 text-sm mb-2">ℹ️ Instruções</h3>
-            <ul className="text-xs text-gray-600 space-y-1">
+            <ul className="text-xs text-gray-600 space-y-2">
               <li>• Colunas obrigatórias: <strong>nome</strong> e <strong>telefone</strong></li>
               <li>• Opcionais: email, observacoes, categoriaId</li>
-              <li>• Use o template como referência</li>
+              <li className="text-blue-700 bg-blue-50 p-2 rounded">
+                <strong>💡 Dica sobre o Telefone:</strong> Não se preocupe com o formato! O sistema reconhece automaticamente números com ou sem o +55. Você pode importar contatos salvos apenas com DDD (ex: 11999999999) ou até mesmo com parênteses e traços.
+              </li>
             </ul>
           </div>
 

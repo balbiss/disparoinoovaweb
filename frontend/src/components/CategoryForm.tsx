@@ -75,22 +75,22 @@ export function CategoryForm({ category, onSuccess, onCancel }: CategoryFormProp
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-lg border border-gray-100" role="dialog" aria-labelledby="form-title">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-lg border border-gray-100 max-h-[90vh] overflow-y-auto" role="dialog" aria-labelledby="form-title">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+            <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
             </svg>
           </div>
-          <h2 id="form-title" className="text-2xl font-bold text-gray-900">
+          <h2 id="form-title" className="text-xl sm:text-2xl font-bold text-gray-900">
             {category ? 'Editar Categoria' : 'Nova Categoria'}
           </h2>
-          <p className="text-gray-500 mt-2">
+          <p className="text-sm sm:text-base text-gray-500 mt-2">
             {category ? 'Atualize as informações da categoria' : 'Crie uma nova categoria para organizar seus contatos'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
           <div>
             <label htmlFor="nome" className="block text-sm font-semibold text-gray-700 mb-2">
               Nome *

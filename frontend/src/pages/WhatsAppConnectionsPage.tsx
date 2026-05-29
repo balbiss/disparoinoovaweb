@@ -248,21 +248,7 @@ export function WhatsAppConnectionsPage() {
       return;
     }
 
-    // Validar se as configurações do provedor estão disponíveis
-    if (newSessionProvider === 'WAHA' && (!settings?.wahaHost || !settings?.wahaApiKey)) {
-      toast.error('Configure as credenciais WAHA nas configurações do sistema');
-      return;
-    }
-
-    if (newSessionProvider === 'EVOLUTION' && (!settings?.evolutionHost || !settings?.evolutionApiKey)) {
-      toast.error('Configure as credenciais Evolution API nas configurações do sistema');
-      return;
-    }
-
-    if (newSessionProvider === 'QUEPASA' && (!settings?.quepasaUrl || !settings?.quepasaLogin || !settings?.quepasaPassword)) {
-      toast.error('Configure as credenciais Quepasa nas configurações do sistema');
-      return;
-    }
+    // A validação de credenciais agora é feita pelo backend
 
     setIsCreating(true);
     try {

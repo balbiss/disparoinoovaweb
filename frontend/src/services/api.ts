@@ -86,6 +86,12 @@ class ApiService {
     });
   }
 
+  async deleteAllContacts(): Promise<{ message: string, count: number }> {
+    return this.request<{ message: string, count: number }>('/contatos/bulk/delete-all', {
+      method: 'POST',
+    });
+  }
+
   // Category methods
   async getCategories(params?: {
     search?: string;

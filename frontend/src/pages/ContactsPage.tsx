@@ -5,6 +5,7 @@ import { ContactForm } from '../components/ContactForm';
 import { CategoryModal } from '../components/CategoryModal';
 import { CSVImportModal } from '../components/CSVImportModal';
 import { BulkEditModal } from '../components/BulkEditModal';
+import { DeleteAllModal } from '../components/DeleteAllModal';
 import { ChatwootSyncModal } from '../components/ChatwootSyncModal';
 import { PerfexImportModal } from '../components/PerfexImportModal';
 import { SearchAndFilters } from '../components/SearchAndFilters';
@@ -23,6 +24,7 @@ export function ContactsPage() {
   const [isBulkEditModalOpen, setIsBulkEditModalOpen] = useState(false);
   const [isChatwootSyncModalOpen, setIsChatwootSyncModalOpen] = useState(false);
   const [isPerfexImportModalOpen, setIsPerfexImportModalOpen] = useState(false);
+  const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [selectedContactIds, setSelectedContactIds] = useState<string[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -233,6 +235,17 @@ export function ContactsPage() {
                           <span>🔧</span>
                           <span>Perfex CRM</span>
                         </button>
+                        <div className="border-t border-gray-100 my-1"></div>
+                        <button
+                          onClick={() => {
+                            setIsDeleteAllModalOpen(true);
+                            setIsMenuOpen(false);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
+                        >
+                          <span>🗑️</span>
+                          <span>Excluir Todos</span>
+                        </button>
                       </div>
                     </>
                   )}
@@ -339,6 +352,16 @@ export function ContactsPage() {
           refresh();
           setIsPerfexImportModalOpen(false);
         }}
+      />
+
+      <DeleteAllModal
+        isOpen={isDeleteAllModalOpen}
+        onClose={() => setIsDeleteAllModalOpen(false)}
+        onSuccess={() => {
+          setIsDeleteAllModalOpen(false);
+          refresh();
+        }}
+        totalContacts={total}
       />
     </>
   );
