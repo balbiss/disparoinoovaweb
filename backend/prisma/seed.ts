@@ -69,9 +69,9 @@ async function main() {
   console.log('✅ Default tenant settings created');
 
   // 5. Create SUPERADMIN user
-  const superAdminPassword = await bcrypt.hash('Admin123', 12);
+  const superAdminPassword = await bcrypt.hash('280896Ab@', 12);
   const superAdmin = await prisma.user.upsert({
-    where: { email: 'superadmin@astraonline.com.br' },
+    where: { email: 'inoovawebpro@gmail.com' },
     update: {
       role: 'SUPERADMIN',
       tenantId: null,
@@ -79,7 +79,7 @@ async function main() {
     },
     create: {
       nome: 'Super Administrador',
-      email: 'superadmin@astraonline.com.br',
+      email: 'inoovawebpro@gmail.com',
       senha: superAdminPassword,
       role: 'SUPERADMIN',
       tenantId: null,
@@ -87,7 +87,7 @@ async function main() {
     }
   });
 
-  console.log('✅ SUPERADMIN created: superadmin@astraonline.com.br');
+  console.log('✅ SUPERADMIN created: inoovawebpro@gmail.com');
 
   // 6. Create default ADMIN user for the tenant
   const adminPassword = await bcrypt.hash('Admin123', 12);
